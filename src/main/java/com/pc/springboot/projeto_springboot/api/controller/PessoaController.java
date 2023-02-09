@@ -1,5 +1,8 @@
 package com.pc.springboot.projeto_springboot.api.controller;
 
+import com.pc.springboot.projeto_springboot.domain.exception.EnderecoNaoEncontraException;
+import com.pc.springboot.projeto_springboot.domain.exception.NegocioExeption;
+import com.pc.springboot.projeto_springboot.domain.model.Endereco;
 import com.pc.springboot.projeto_springboot.domain.model.Pessoa;
 import com.pc.springboot.projeto_springboot.domain.repository.PessoaRepository;
 import com.pc.springboot.projeto_springboot.domain.service.CadastroPessoaService;
@@ -13,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/pessoa")
+@RequestMapping("/pessoas")
 public class PessoaController {
 
     @Autowired
@@ -28,32 +31,37 @@ public class PessoaController {
     }
 
     @GetMapping("{id}")
-    public Pessoa buscar(Long id){
-        return pessoaRepository.findById(id).get();
+    public Pessoa buscar(@PathVariable Long id){
+        return cadastroPessoa.buscarOuFalhar(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Pessoa adicionar(@RequestBody Pessoa pessoa){
-        return cadastroPessoa.salvar(pessoa);
+        try{
+            return cadastroPessoa.salvar(pessoa);
+        } catch (EnderecoNaoEncontraException e){
+            throw new NegocioExeption(e.getMessage(), e);
+        }
+
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Pessoa> atualizar(@PathVariable Long id, @RequestBody Pessoa pessoa){
-        Optional<Pessoa> pessoaAtual = pessoaRepository.findById(id);
+    public Pessoa atualizar(@PathVariable Long id, @RequestBody Pessoa pessoa){
+        Pessoa pessoaAtual = cadastroPessoa.buscarOuFalhar(id);
 
-        if (pessoaAtual.isPresent()){
-            BeanUtils.copyProperties(pessoa, pessoaAtual.get(),"id");
-            Pessoa pessoaSalva = cadastroPessoa.salvar(pessoaAtual.get());
-            return ResponseEntity.ok(pessoaSalva);
+        BeanUtils.copyProperties(pessoa, pessoaAtual,"id");
+
+        try{
+            return cadastroPessoa.salvar(pessoaAtual);
+        } catch (EnderecoNaoEncontraException e){
+            throw new NegocioExeption(e.getMessage(), e);
         }
-
-        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void remover(Long id){
+    public void remover(@PathVariable Long id){
         cadastroPessoa.excluir(id);
     }
 
