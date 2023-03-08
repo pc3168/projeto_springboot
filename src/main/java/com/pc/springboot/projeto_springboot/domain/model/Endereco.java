@@ -1,6 +1,12 @@
 package com.pc.springboot.projeto_springboot.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "endereco")
 public class Endereco {
@@ -19,6 +25,13 @@ public class Endereco {
 
     @Column(name = "cidade", length = 50, nullable = false)
     private String cidade;
+
+
+    //@JsonIgnoreProperties("hibernateLazyInitializer")
+    @ManyToOne(fetch = FetchType.LAZY)
+    //@JoinColumn(nullable = false)
+    @JsonIgnore
+    private Pessoa pessoa;
 
 
     public Long getId() {
@@ -66,6 +79,15 @@ public class Endereco {
         return this;
     }
 
+    public Pessoa getPessoa() {
+        return pessoa;
+    }
+
+    public Endereco setPessoa(Pessoa pessoa) {
+        this.pessoa = pessoa;
+        return this;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -81,6 +103,18 @@ public class Endereco {
         return id.hashCode();
     }
 
+//    @Override
+//    public String toString() {
+//        return "Endereco{" +
+//                "id=" + id +
+//                ", logradouro='" + logradouro + '\'' +
+//                ", cep='" + cep + '\'' +
+//                ", numero=" + numero +
+//                ", cidade='" + cidade + '\'' +
+//                '}';
+//    }
+
+
     @Override
     public String toString() {
         return "Endereco{" +
@@ -89,6 +123,7 @@ public class Endereco {
                 ", cep='" + cep + '\'' +
                 ", numero=" + numero +
                 ", cidade='" + cidade + '\'' +
+                ", pessoa=" + pessoa +
                 '}';
     }
 }

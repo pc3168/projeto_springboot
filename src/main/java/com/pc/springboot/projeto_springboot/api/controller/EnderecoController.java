@@ -26,10 +26,10 @@ public class EnderecoController {
         return enderecoRepository.findAll();
     }
 
-    @GetMapping("{nome}")
-    public Endereco buscarPorNome(String nome){
-        return enderecoRepository.findByNome(nome);
-    }
+//    @GetMapping("{nome}")
+//    public Endereco buscarPorNome(String nome){
+//        return enderecoRepository.findByNome(nome);
+//    }
 
     @GetMapping("{id}")
     public Endereco buscar(@PathVariable Long id){

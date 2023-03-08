@@ -4,8 +4,11 @@ import com.pc.springboot.projeto_springboot.domain.exception.EnderecoNaoEncontra
 import com.pc.springboot.projeto_springboot.domain.exception.EntidadeEmUsoException;
 import com.pc.springboot.projeto_springboot.domain.exception.EntidadeNaoEncontraException;
 import com.pc.springboot.projeto_springboot.domain.model.Endereco;
+import com.pc.springboot.projeto_springboot.domain.model.Pessoa;
 import com.pc.springboot.projeto_springboot.domain.repository.EnderecoRepository;
+import com.pc.springboot.projeto_springboot.domain.repository.PessoaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -16,8 +19,18 @@ public class CadastroEnderecoService {
     @Autowired
     private EnderecoRepository enderecoRepository;
 
+    @Lazy
+    @Autowired
+    private CadastroPessoaService cadastroPessoa;
+
 
     public Endereco salvar(Endereco endereco){
+        System.out.println(endereco);
+        //Long pessoaId = endereco.getPessoa().getId();
+
+//        Pessoa pessoa = cadastroPessoa.buscarOuFalhar(pessoaId);
+//        endereco.setPessoa(pessoa);
+
         return  enderecoRepository.save(endereco);
     }
     
